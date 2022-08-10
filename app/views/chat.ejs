@@ -11,44 +11,103 @@
       integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <div class="bg container-fluid min-vh-100 px-0 py-5">
+      <div class="glass container rounded shadow-lg my-5 p-0" id="mensagens">
+        <div class="d-flex mensagem glass p-3 my-3 rounded border border-white">
+          <i class="bi bi-person-square text-white fs-1 ms-1 me-4"></i>
+          <div class="col">
+            <h4>nome</h4>
+            <p class="m-0">mensagem</p>
+          </div>
+        </div>
+        <div class="mensagem glass p-3 my-3 rounded border border-white">
+          <h4>nome</h4>
+          <p class="m-0">mensagem</p>
+        </div>
+        <div class="mensagem glass p-3 my-3 rounded border border-white">
+          <h4>nome</h4>
+          <p class="m-0">mensagem</p>
+        </div>
+        <div class="mensagem glass p-3 my-3 rounded border border-white">
+          <h4>nome</h4>
+          <p class="m-0">mensagem</p>
+        </div>
+      </div>
+      <div class="fixed-bottom glass container rounded shadow-lg p-0 mb-4">
+        <form>
+          <div class="input-group">
+            <input
+              class="rounded-start bg-transparent border border-transparent form-control form-control-lg text-white"
+              type="text"
+              placeholder="Mensagem"
+              name="mensagem"
+              id="mensagem"
+            />
+            <input
+              type="text"
+              id="nome"
+              hidden
+              value="<%= dadosForm.nome %>"
+            />
+            <span class="input-group-btn">
+              <button
+                onclick="enviarMensagem()"
+                class="btn btn-lg btn-default text-white"
+                type="button"
+                id="enviar_mensagem"
+              >
+                <i class="bi bi-send-fill"></i>
+              </button>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
       integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
-      crossorigin="anonymous">
-    </script>
+      crossorigin="anonymous"
+    ></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
       integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
-      crossorigin="anonymous">
-    </script>
+      crossorigin="anonymous"
+    ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      const socket = io("http://localhost:5001");
+      const SERVER = "http://localhost:5001";
+			const socket = io(SERVER);
+
       let enviar_mensagem = document.querySelector("#enviar_mensagem");
-      let apelido = document.querySelector("#apelido");
+      let nome = document.querySelector("#nome");
       let mensagem = document.querySelector("#mensagem");
 
-      enviar_mensagem.click(() => {
+      function enviarMensagem() {
         socket.emit("msgParaServidor", {
-          apelido: apelido.val(),
-          mensagem: mensagem.val(),
+          nome: nome.value,
+          mensagem: mensagem.value,
         });
         let fieldMessage = document.querySelector("#mensagem");
         fieldMessage.value = "";
-      });
+      }
 
       socket.on("msgParaCliente", (data) => {
-        let html = "";
-        html += '<div class="dialogo">';
-        html += "<h4>" + data.apelido + "</h4>";
-        html += "<p>" + data.mensagem + "</p>";
-        html += "</div>";
-        
-        let dialogos = document.querySelector("#dialogos");
-        dialogos.append(html);
+        let div = document.createElement("div");
+        div.classList.add("mensagem", "glass", "p-3", "my-3", "rounded", "border", "border-white");
+        let h4 = document.createElement("h4");
+        h4.innerText = data.nome;
+        let p = document.createElement("p");
+        p.classList.add("m-0");
+        p.innerText = data.mensagem;
+        let mensagens = document.querySelector("#mensagens");
+        mensagens.appendChild(div);
+        div.appendChild(h4);
+        div.appendChild(p);
       });
     </script>
   </body>

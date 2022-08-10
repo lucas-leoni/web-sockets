@@ -1,5 +1,6 @@
 module.exports.iniciaChat = (application, req, res) => {
   const dadosForm = req.body;
+  console.log(dadosForm);
 
   req.assert('nome', 'O campo Nome ou Apelido é obrigatório e deve ser preenchido.').notEmpty();
   req.assert('nome', 'O campo Nome ou Apelido deve conter entre 3 a 15 caracteres.').len(3,14);
@@ -10,5 +11,11 @@ module.exports.iniciaChat = (application, req, res) => {
     res.render('index', {validacao: erros });
     return;
   };
-  res.render('chat');
+
+  application.get('io').emit('msgParaCliente', {
+    nome: dadosForm.nome, 
+    mensagem: 'Entrou no chat'
+  });
+
+  res.render('chat', { dadosForm });
 }
